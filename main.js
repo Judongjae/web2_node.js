@@ -6,17 +6,32 @@ var app = http.createServer(function (request, response) {
   var uurl = request.url;
   var queryData = url.parse(uurl, true).query;
   console.log(queryData);
-  if (uurl == "/") {
-    uurl = "/index.html";
-  }
-  if (uurl == "/favicon.ico") {
-    response.writeHead(404);
-    response.end();
-    return;
-  }
-  response.writeHead(200);
-  console.log(__dirname + uurl);
-  response.end(fs.readFileSync(__dirname + uurl));
+
+  fs.readFile(`data/${queryData.id}`, "utf8", function (err, data) {
+    let description = data;
+    var template = `<!doctype html>
+  <html>
+  <head>
+    <title>WEB1 - ${fs.readFileSync(__dirname + uurl)}</title>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <h1><a href="index.html">WEB</a></h1>
+    <ol>
+      <li><a href="1.html">HTML</a></li>
+      <li><a href="2.html">CSS</a></li>
+      <li><a href="3.html">JavaScript</a></li>
+    </ol>
+    <h2>${fs.readFileSync(__dirname + uurl)}</h2>
+    <p>
+        ${description}  
+    </p>
+  </body>
+  </html>
+  `;
+    response.writeHead(200);
+    response.end(fs.readFileSync(__dirname + uurl));
+  });
 });
 app.listen(3000);
 //
