@@ -1,13 +1,14 @@
-numbers = [1, 2, 3, 4, 6, 7, 8, 0];
-function solution(numbers) {
-  let answer = 0;
-  let yo = 0;
+let numbers = [1, 3, 4, 5, 8, 2, 1, 4, 5, 9, 5];
+let hand = right;
+let result = [];
+function solution(numbers, hand) {
   for (i = 0; i < numbers.length; i++) {
-    yo += numbers[i];
-    console.log(yo);
+    if (numbers[i] == 1 || numbers[i] == 4 || numbers[i] == 7) {
+      result[i] = [L];
+    } else if (numbers[i] == 3 || numbers[i] == 6 || numbers[9]) {
+      result[i] = [R];
+    }
   }
-  answer = 45 - yo;
-  //   return yo;
+  var answer = "";
   return answer;
 }
-solution(numbers);
