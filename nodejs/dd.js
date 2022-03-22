@@ -1,109 +1,68 @@
-const fs = require("fs");
-
-const readFileSyncAddress = "input.txt";
-
-const input = fs
-  .readFileSync(readFileSyncAddress)
-  .toString()
-  .trim()
-  .split("\n");
-
-const [n, ...commands] = input;
-
-class Node {
-  constructor(item) {
-    this.item = item;
-    this.next = null;
-  }
-}
-
-class Queue {
+class minHeap {
   constructor() {
-    this.head = null;
-    this.tail = null;
-    this.size = 0;
+    this.heap = [];
+    this.heap.push(-Infinity);
   }
-  push(item) {
-    const node = new Node(item);
-    if (!this.head) {
-      this.head = node;
-      this.head.next = this.tail;
-    } else {
-      this.tail.next = node;
+  insert(val) {
+    this.heap.push(val);
+    this.upheap(this.heap.length - 1);
+  }
+  upheap(pos) {
+    let tmp = this.heap[pos];
+    while (tmp < this.heap[parseInt(pos / 2)]) {
+      this.heap[pos] = this.heap[parseInt(pos / 2)];
+      pos = parseInt(pos / 2);
     }
-
-    this.tail = node;
-    this.size += 1;
+    this.heap[pos] = tmp;
   }
-
-  getSize() {
-    return this.size;
+  get() {
+    if (this.heap.length === 2) return this.heap.pop();
+    let res = this.heap[1];
+    this.heap[1] = this.heap.pop();
+    this.downheap(1, this.heap.length - 1);
+    return res;
   }
-
-  pop() {
-    if (this.size > 2) {
-      const item = this.head.item;
-      const newHead = this.jead.next;
-      this.head = newHead;
-      this.size -= 1;
-      return item;
-    } else if (this.size === 2) {
-      const item = this.head.item;
-      const newHead = this.head.next;
-      this.head = newHead;
-      this.tail = newHead;
-      this.size -= 1;
-      return item;
-    } else if (this.size === 1) {
-      const item = this.head.item;
-      this.head = null;
-      this.tail = null;
-      this.size -= 1;
-      return item;
-    } else {
-      return -1;
+  downheap(pos, len) {
+    let tmp = this.heap[pos],
+      child;
+    while (pos <= parseInt(len / 2)) {
+      child = pos * 2;
+      if (child < len && this.heap[child] > this.heap[child + 1]) child++;
+      if (tmp <= this.heap[child]) break;
+      this.heap[pos] = this.heap[child];
+      pos = child;
     }
+    this.heap[pos] = tmp;
   }
-  empty() {
-    return this.size ? 0 : 1;
+  size() {
+    return this.heap.length - 1;
   }
   front() {
-    return this.head ? this.head.item : -1;
-  }
-  back() {
-    return this.tail ? this.tail.item : -1;
+    return this.heap[1];
   }
 }
-function solution(n, commands) {
-  let answer = "";
-  const queue = new Queue();
-
-  for (let i = 0; i < n; i += 1) {
-    const command = commands[i].split(" ")[0];
-
-    switch (command) {
-      case "push":
-        const pushItem = commands[i].split(" ")[1];
-        queue.push(pushItem);
-        break;
-      case "pop":
-        answer += queue.pop() + " ";
-        break;
-      case "front":
-        answer += queue.back() + " ";
-        break;
-      case "empty":
-        answer += queue.empty() + " ";
-        break;
-      case "size":
-        answer += queue.getSize() + " ";
-        break;
-      default:
-        break;
+const fs = require("fs");
+const filePath = process.platform === "linux" ? "/dev/stdin" : "input.txt";
+let input = fs.readFileSync(filePath).toString().trim().split("\n");
+let n = Number(input[0]); // 연산의 개수
+let index = 1;
+let minQueue = new minHeap();
+let result = "";
+while (index <= n) {
+  if (Number(input[index]) === 0) {
+    // 가장 작은 값 출력하고 제거
+    if (minQueue.size() === 0) {
+      // console.log(0);
+      result += `0\n`;
+    } else {
+      //   console.log(minQueue.front());
+      result += `${minQueue.front()}\n`;
+      minQueue.get();
     }
+  } else {
+    // input[index]값 배열에 넣기
+    minQueue.insert(Number(input[index]));
   }
-  return answer.split(" ").join("\n");
+  index++;
 }
-
-const answer = solution(n, commands);
-console.log(answer);
+console.log(result.trim());
